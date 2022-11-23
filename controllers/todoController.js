@@ -1,5 +1,6 @@
 const { writeTodo, readTodo } = require('../utils/file')
 const { v4: uuidv4 } = require('uuid')
+const AppError = require('../utils/appError')
 
 exports.getAllTodo = async (req, res, next) => {
   try {
@@ -20,10 +21,10 @@ exports.createTodo = async (req, res, next) => {
 
     const { title, status = false, createdAt = newDate } = req.body
     if (!title || !title.trim()) {
-      return res.status(400).json({ message: 'title is require' })
+      throw AppError('title is require', 400)
     }
     if (typeof status !== 'boolean') {
-      return res.status(400).json({ message: 'status must be a boolean' })
+      throw AppError('status should be boolean', 400)
     }
     const newTodos = await readTodo()
     const createdTodo = { title, status, id: uuidv4(), createdAt }
@@ -50,10 +51,10 @@ exports.updateTodo = async (req, res, next) => {
   try {
     const { title, status } = req.body
     if (!title || !title.trim()) {
-      return res.status(400).json({ message: 'title is require' })
+      throw AppError('title is require', 400)
     }
     if (typeof status !== 'boolean') {
-      return res.status(400).json({ message: 'status must be a boolean' })
+      throw AppError('status should be boolean', 400)
     }
     const { id } = req.params
     const oldTodos = await readTodo()
